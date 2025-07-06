@@ -1,0 +1,15 @@
+FROM node:18-alpine
+
+WORKDIR /usr/src/app
+
+# 의존성 설치 (개발용이니 --production 빼고 전체 설치)
+COPY l0g1n-backend/package*.json ./
+RUN npm install
+
+# 개발 편의를 위해 nodemon 등 설치 가능 (선택 사항)
+RUN npm install -g nodemon
+
+
+
+#CMD ["node", "src/app.js"]
+CMD ["tail", "-f", "/dev/null"]
