@@ -28,9 +28,9 @@ L0G1N은 확장성과 보안성을 고려하여 설계된 인증 컴포넌트입
 
 ### 요구 사항
 
-- Java 8 이상  
-- Docker & Docker Compose  
-- PostgreSQL 15 이상  
+- Docker & Docker Compose (버전 3.8 + recommended)
+- PostgreSQL 15 +
+- Node.js 18.x LTS
 
 ---
 
