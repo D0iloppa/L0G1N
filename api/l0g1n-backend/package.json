@@ -4,8 +4,13 @@
     "description": "backend",
     "main": "index.js",
     "scripts": {
-      "test": "echo \"Error: no test specified\" && exit 1"
+        "start": "node src/app.js",
+        "dev": "nodemon src/app.js",
+        "test": "echo \"Error: no test specified\" && exit 1"
     },
     "author": "D0IL",
-    "license": "ISC"
-  }
+    "license": "ISC",
+    "dependencies": {
+        "express": "^5.1.0"
+    }
+}
