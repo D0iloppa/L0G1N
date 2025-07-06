@@ -5,8 +5,8 @@ services:
     image: nginx:latest
     container_name: l0g1n-gw
     ports:
-      - "80:80"
-      - "443:443"
+      - "${GW_HTTP_PORT}:80"
+      - "${GW_HTTPS_PORT}:443"
     volumes:
       - ./nginx/conf.d:/etc/nginx/conf.d:ro
       - ./nginx/certs:/etc/nginx/certs:ro
@@ -19,9 +19,9 @@ services:
     image: postgres:15
     container_name: l0g1n-db
     environment:
-      POSTGRES_DB: l0g1n_db
-      POSTGRES_USER: l0g1n_user
-      POSTGRES_PASSWORD: strong_password_here
+      POSTGRES_DB: ${DB_NAME}
+      POSTGRES_USER: ${DB_USER}
+      POSTGRES_PASSWORD: ${DB_PW}
     volumes:
       - db-data:/var/lib/postgresql/data
       - ./db/init.sql:/docker-entrypoint-initdb.d/init.sql:ro
@@ -36,12 +36,10 @@ services:
     environment:
       DB_HOST: db
       DB_PORT: 5432
-      DB_NAME: l0g1n_db
-      DB_USER: l0g1n_user
-      DB_PASSWORD: strong_password_here
+      DB_NAME: ${DB_NAME}
+      DB_USER: ${DB_USER}
+      DB_PASSWORD: ${DB_PW}
       PORT: 8080
-    expose:
-      - "8080"
     networks:
       - l0g1n-network
 
