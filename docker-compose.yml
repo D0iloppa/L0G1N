@@ -1,0 +1,53 @@
+version: '3.8'
+
+services:
+  gw:
+    image: nginx:latest
+    container_name: l0g1n-gw
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./nginx/conf.d:/etc/nginx/conf.d:ro
+      - ./nginx/certs:/etc/nginx/certs:ro
+    depends_on:
+      - api
+    networks:
+      - l0g1n-network
+
+  db:
+    image: postgres:15
+    container_name: l0g1n-db
+    environment:
+      POSTGRES_DB: l0g1n_db
+      POSTGRES_USER: l0g1n_user
+      POSTGRES_PASSWORD: strong_password_here
+    volumes:
+      - db-data:/var/lib/postgresql/data
+      - ./db/init.sql:/docker-entrypoint-initdb.d/init.sql:ro
+    networks:
+      - l0g1n-network
+
+  api:
+    build: ./api
+    container_name: l0g1n-api
+    depends_on:
+      - db
+    environment:
+      DB_HOST: db
+      DB_PORT: 5432
+      DB_NAME: l0g1n_db
+      DB_USER: l0g1n_user
+      DB_PASSWORD: strong_password_here
+      PORT: 8080
+    expose:
+      - "8080"
+    networks:
+      - l0g1n-network
+
+volumes:
+  db-data:
+
+networks:
+  l0g1n-network:
+    driver: bridge

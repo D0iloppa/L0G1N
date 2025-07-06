@@ -1,16 +1,17 @@
 # L0G1N
 
 > **From Zero to One, Simply Secure.**  
-> 빠르고 강력하며 심플한 인증 프레임워크
+> 빠르고 강력하며 심플한 인증 컴포넌트
 
 ---
 
 ## 아키텍처
 
-L0G1N은 확장성과 보안성을 고려하여 설계된 인증 프레임워크입니다.
+L0G1N은 확장성과 보안성을 고려하여 설계된 인증 컴포넌트입니다.
 
+- **GW**: nginx
 - **DB**: PostgreSQL  
-- **WAS**: Spring Boot  
+- **API**: node + Express
 
 ---
 
