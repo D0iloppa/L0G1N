@@ -23,8 +23,8 @@ services:
     ports:
       - "${DB_PORT}:5432"
     volumes:
-      - ./db/data:/var/lib/postgresql/data
-      - ./db/init.sql:/docker-entrypoint-initdb.d/init.sql:ro
+      - db-data:/var/lib/postgresql/data
+      #- ./db/init.sql:/docker-entrypoint-initdb.d/init.sql:ro
     networks:
       - l0g1n-network
 
@@ -45,6 +45,9 @@ services:
       PORT: 8080
     networks:
       - l0g1n-network
+
+volumes:
+  db-data:
 
 networks:
   l0g1n-network:
