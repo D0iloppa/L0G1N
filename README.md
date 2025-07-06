@@ -42,3 +42,6 @@ cd L0G1N
 
 # Docker Compose로 실행
 docker-compose up -d
+# (개발용)
+docker-compose -f docker-compose-dev.yml up
+
