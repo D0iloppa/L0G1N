@@ -11,7 +11,7 @@ app.use(express.urlencoded({ extended: true }));
 // 루트 경로 서빙
 app.get('/', (req, res) => {
     res.json({
-        message: 'Hello World',
+        message: 'Hello World!',
         timestamp: new Date().toISOString(),
         status: 'success'
     });
