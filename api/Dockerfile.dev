@@ -2,11 +2,14 @@ FROM node:18-alpine
 
 WORKDIR /app
 
+COPY ./l0g1n-backend/package.json ./
+
+
 # 개발 편의를 위해 nodemon 등 설치 가능 (선택 사항)
 RUN npm install -g nodemon
 
 RUN npm install
 
 
-#CMD ["node", "src/app.js"]
-CMD ["tail", "-f", "/dev/null"]
+CMD ["npm", "run", "dev"]
+#CMD ["tail", "-f", "/dev/null"]

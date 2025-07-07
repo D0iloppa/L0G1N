@@ -10,4 +10,4 @@ COPY ./conf.d/default.conf.template /etc/nginx/templates/default.conf.template
 
 
 # Entrypoint에서 환경변수를 치환한 후 Nginx 실행
-CMD ["/bin/sh", "-c", "envsubst < /etc/nginx/templates/default.conf.template > /etc/nginx/conf.d/default.conf && exec nginx -g 'daemon off;'"]
+CMD ["/bin/sh", "-c", "envsubst '${API_PORT}' < /etc/nginx/templates/default.conf.template > /etc/nginx/conf.d/default.conf && exec nginx -g 'daemon off;'"]

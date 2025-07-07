@@ -1,6 +1,7 @@
 services:
   gw:
-    image: nginx:latest
+    build:
+      context: ./nginx
     container_name: l0g1n-gw
     ports:
       - "${GW_HTTP_PORT}:80"
