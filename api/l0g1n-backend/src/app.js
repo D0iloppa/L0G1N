@@ -20,7 +20,13 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
 // ✅ Swagger UI
-app.use('/docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
+app.use(
+    '/docs',
+    swaggerUi.serve,
+    swaggerUi.setup(swaggerSpec, {
+      customSiteTitle: 'L0G1N API Document', // ✅ 탭 제목 (브라우저 title)
+    })
+  );
 
 // ✅ 루트 페이지 (index.ejs 렌더링)
 app.get('/', (req, res) => {

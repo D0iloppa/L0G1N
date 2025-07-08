@@ -1,3 +1,6 @@
+const path = require('path');
+
+
 // swagger.js
 const swaggerJsdoc = require('swagger-jsdoc');
 const swaggerUi = require('swagger-ui-express');
@@ -12,9 +15,9 @@ const swaggerOptions = {
     },
   },
   apis: [
-    './routes/*.js',
-    './controllers/*.js'
-  ] // 📌 JSDoc 스캔 위치
+    path.join(__dirname, '../routes/*.js'),
+    path.join(__dirname, '../controllers/*.js')
+  ]
 };
 
 const swaggerSpec = swaggerJsdoc(swaggerOptions);
