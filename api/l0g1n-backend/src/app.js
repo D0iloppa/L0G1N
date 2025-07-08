@@ -1,4 +1,5 @@
 const express = require('express');
+const expressLayouts = require('express-ejs-layouts');
 const path = require('path');
 const { swaggerUi, swaggerSpec } = require('./util/swagger');
 
@@ -12,8 +13,19 @@ const PORT = process.env.PORT || 3000;
 app.set('view engine', 'ejs');
 app.set('views', path.join(__dirname, 'views'));
 
+// ✅ EJS Layout 미들웨어 등록
+app.use(expressLayouts);
+app.set('layout', 'layout'); // views/layout.ejs가 기본 레이아웃 파일로 사용됨
+
+
+
 // ✅ 정적 파일 서빙 (예: CSS, JS, 이미지 등)
 app.use(express.static(path.join(__dirname, 'public')));
+
+app.use((req, res, next) => {
+    res.locals.baseUrl = req.baseUrl || '';
+    next();
+  });
 
 // ✅ JSON + URL 인코딩 파싱 미들웨어
 app.use(express.json());
@@ -46,7 +58,22 @@ app.get('/health', (req, res) => {
 });
 
 // ✅ API 라우터 등록 (/login, /logout 등)
-app.use('/', authRoutes); // or `/api`, if you want separation
+app.use('/api', authRoutes); // or `/api`, if you want separation
+
+
+
+// ✅ admin 라우터 등록 (/login, /logout 등)
+const session = require('express-session');
+const adminRoutes = require('./routes/adminRoutes');
+
+app.use(session({
+  secret: 'keyboard cat', resave: false, saveUninitialized: true
+}));
+
+app.use('/admin', adminRoutes);
+
+
+
 
 // ✅ 404 핸들러 (HTML 기반으로 전환 가능)
 app.use('*', (req, res) => {

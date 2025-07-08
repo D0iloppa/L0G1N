@@ -1,0 +1,32 @@
+<% layout('layout') -%>
+<% title = 'Admin Dashboard' %>
+
+<h2>📊 관리자 대시보드</h2>
+
+<% if (projects && projects.length > 0) { %>
+  <table class="nav-table">
+    <thead>
+      <tr>
+        <th>Project Name</th>
+        <th>Code</th>
+        <th>Status</th>
+        <th>Created</th>
+      </tr>
+    </thead>
+    <tbody>
+      <% projects.forEach(p => { %>
+        <tr>
+          <td><%= p.project_name %></td>
+          <td><code><%= p.project_code %></code></td>
+          <td><span class="status-ok"><%= p.status %></span></td>
+          <td><%= new Date(p.created_at).toLocaleString() %></td>
+        </tr>
+      <% }) %>
+    </tbody>
+  </table>
+<% } else { %>
+  <div class="info-box">
+    <p>현재 등록된 프로젝트가 없습니다.</p>
+    <a href="/admin/project/create" class="nav-link">👉 프로젝트 생성하기</a>
+  </div>
+<% } %>

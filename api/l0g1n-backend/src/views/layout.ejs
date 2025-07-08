@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <title><%= title %> | doil-sb</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  
+  <link href="<%= baseUrl %>/vendors/prism/prism.min.css" rel="stylesheet" />
+  <link href="<%= baseUrl %>/css/common.css" rel="stylesheet" />
+  
+
+  <!-- <link rel="stylesheet" href="/css/style.css" /> -->
+
+  <% if (typeof customCss !== 'undefined' && customCss) { %>
+    <link rel="stylesheet" href="/css/<%= customCss %>" />
+  <% } %>
+  
+</head>
+<body>
+  <!-- 개선된 🌞/🌙 토글 스위치 -->
+  <div class="theme-switch" onclick="toggleTheme()" title="Toggle Theme">
+    <span class="theme-icon sun-icon">☀️</span>
+    <div class="theme-switch-container">
+      <div class="switch-knob"></div>
+    </div>
+    <span class="theme-icon moon-icon">🌙</span>
+  </div>
+
+  <div class="main-content">
+    <%- body %>
+  </div>
+
+
+  <script src="<%= baseUrl %>/vendors/prism/prism.min.js"></script>
+  <script>
+    function toggleTheme() {
+      document.body.classList.toggle('light-mode');
+      
+      // 사용자 선택을 localStorage에 저장
+      const isLightMode = document.body.classList.contains('light-mode');
+      localStorage.setItem('theme', isLightMode ? 'light' : 'dark');
+    }
+    
+    // 페이지 로드 시 저장된 테마 적용
+    document.addEventListener('DOMContentLoaded', function() {
+      const savedTheme = localStorage.getItem('theme');
+      if (savedTheme === 'light') {
+        document.body.classList.add('light-mode');
+      }
+      
+      // Prism.js 하이라이팅 실행
+      if (typeof Prism !== 'undefined') {
+        Prism.highlightAll();
+      }
+    });
+  </script>
+
+
+</body>
+</html>

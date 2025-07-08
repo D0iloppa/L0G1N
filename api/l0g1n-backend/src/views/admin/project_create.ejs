@@ -1,0 +1,24 @@
+<% layout('layout') -%>
+<% title = '프로젝트 생성' %>
+
+<h2>🛠️ 새 프로젝트 생성</h2>
+
+<form method="POST" action="/admin/project/create" class="form-box">
+  <label>프로젝트 이름</label>
+  <input type="text" name="project_name" placeholder="ex) Letanton" required />
+
+  <label>프로젝트 코드</label>
+  <input type="text" name="project_code" placeholder="ex) letanton" required />
+
+  <label>상태</label>
+  <select name="status">
+    <option value="active">활성</option>
+    <option value="inactive">비활성</option>
+  </select>
+
+  <button type="submit">📌 프로젝트 등록</button>
+
+  <% if (error) { %>
+    <p class="error-msg"><%= error %></p>
+  <% } %>
+</form>
