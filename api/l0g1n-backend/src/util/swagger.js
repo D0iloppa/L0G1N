@@ -11,7 +11,10 @@ const swaggerOptions = {
       description: '인증 시스템 API 문서',
     },
   },
-  apis: ['./routes/*.js'], // 주석 기반 문서 위치
+  apis: [
+    './routes/*.js',
+    './controllers/*.js'
+  ] // 📌 JSDoc 스캔 위치
 };
 
 const swaggerSpec = swaggerJsdoc(swaggerOptions);

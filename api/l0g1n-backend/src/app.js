@@ -2,7 +2,7 @@ const express = require('express');
 const path = require('path');
 const { swaggerUi, swaggerSpec } = require('./util/swagger');
 
-const authRoutes = require('./routes/auth');        
+const authRoutes = require('./routes/authRoutes');        
 const dbClient = require('./db/dbClient');
 
 const app = express();
