@@ -11,6 +11,9 @@ yarn-error.log
 docker-compose.override.yml
 docker-compose.override.yaml
 
+# Nginx 인증서
+./nginx/certs/*
+
 # IDE / 편집기
 .vscode/
 .idea/
