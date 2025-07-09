@@ -40,6 +40,8 @@ app.use(
     })
   );
 
+
+
 // ✅ 루트 페이지 (index.ejs 렌더링)
 app.get('/', (req, res) => {
   res.render('index', {
@@ -47,6 +49,8 @@ app.get('/', (req, res) => {
     timestamp: new Date().toISOString(),
   });
 });
+
+
 
 // ✅ 헬스체크
 app.get('/health', (req, res) => {
@@ -81,6 +85,7 @@ app.use('*', (req, res) => {
     code: 404,
     message: '요청하신 경로를 찾을 수 없습니다.',
     path: req.originalUrl,
+    layout: false  // 레이아웃 사용 안함
   });
 });
 

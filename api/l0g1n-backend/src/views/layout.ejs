@@ -9,14 +9,13 @@
   <link href="<%= baseUrl %>/css/common.css" rel="stylesheet" />
   
 
-  <!-- <link rel="stylesheet" href="/css/style.css" /> -->
 
   <% if (typeof customCss !== 'undefined' && customCss) { %>
     <link rel="stylesheet" href="/css/<%= customCss %>" />
   <% } %>
   
 </head>
-<body>
+<body class="bg-gray-900">
   <!-- 개선된 🌞/🌙 토글 스위치 -->
   <div class="theme-switch" onclick="toggleTheme()" title="Toggle Theme">
     <span class="theme-icon sun-icon">☀️</span>
