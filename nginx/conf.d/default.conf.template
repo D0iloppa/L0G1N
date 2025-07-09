@@ -19,8 +19,8 @@ server {
     server_name _;
 
     # SSL 인증서 설정
-    ssl_certificate /etc/nginx/certs/cert.pem;
-    ssl_certificate_key /etc/nginx/certs/key.pem;
+    ssl_certificate /etc/nginx/certs/${SSL_CERT_FILE};
+    ssl_certificate_key /etc/nginx/certs/${SSL_KEY_FILE};
     
     # SSL 보안 설정
     ssl_protocols TLSv1.2 TLSv1.3;
