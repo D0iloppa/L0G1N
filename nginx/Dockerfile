@@ -8,6 +8,9 @@ RUN apt-get update && apt-get install -y gettext-base && rm -rf /var/lib/apt/lis
 # 템플릿 파일 복사 (ex: default.conf.template)
 COPY ./conf.d/default.conf.template /etc/nginx/templates/default.conf.template
 
+# 스크립트 파일 복사 및 실행 권한 부여
+COPY start.sh /start.sh
+RUN chmod +x /start.sh
 
-# Entrypoint에서 환경변수를 치환한 후 Nginx 실행
-CMD ["/bin/sh", "-c", "envsubst '${API_PORT} ${SSL_CERT_FILE} ${SSL_KEY_FILE}' < /etc/nginx/templates/default.conf.template > /etc/nginx/conf.d/default.conf && exec nginx -g 'daemon off;'"]
+# 스크립트 실행
+CMD ["/start.sh"]
