@@ -8,16 +8,16 @@ const AdminController = {
   processLogin: (req, res) => {
     const { username, password } = req.body;
     // 임시: 고정값 로그인
-    if (username === 'admin' && password === 'pass123') {
+    if (username === 'l0gin' && password === '1234') {
       req.session.admin = true;
       res.redirect('/admin/dashboard');
     } else {
-      res.render('/admin/login', { error: '로그인 실패' });
+      res.render('admin/login', { error: '로그인 실패' });
     }
   },
 
   dashboard: async (req, res) => {
-    if (!req.session.admin) return res.redirect('/admin/login');
+    if (!req.session.admin) return res.redirect('admin/login');
     
     /*
     const result = await db.query('SELECT * FROM l0g1n_project');

@@ -1,23 +1,41 @@
 # L0G1N
 
+<div align="center" style="display:flex; margin-bottom:10px">
+  <img src="logo_transparent.png" alt="L0G1N Logo" width="300">
+  <img src="logo.png" alt="L0G1N Logo" width="300">
+</div>
+
 > **From Zero to One, Simply Secure.**  
 > 빠르고 강력하며 심플한 인증 컴포넌트
+
+A fast, powerful, and simple authentication component for modern web applications.
+
 
 ---
 
 ## 아키텍처
 
-L0G1N은 확장성과 보안성을 고려하여 설계된 로그인 인증 컴포넌트입니다.
+L0G1N은 확장성과 보안성을 고려하여 설계된 로그인 인증 통합 컴포넌트입니다.
+
+L0G1N is a login authentication integrated component designed with scalability and security in mind.
 
 - **GW**: nginx
 - **DB**: PostgreSQL  
 - **API**: node + Express
+- **Cache**: Redis (Session Management)
+
+> Authentication sessions are managed through Redis to ensure scalability and reduce backend load, enabling distributed session handling across multiple instances.
 
 ---
 
 ## 주요 특징
 
-- 인증 데이터와 계정 데이터를 명확히 분리한 구조  
+
+> - Clear separation of authentication data and account data structure
+> - Support for multiple authentication methods (password, OAuth, OTP, etc.)
+> - Easy deployment environment based on Docker and Docker-Compose
+
+- 인증 데이터와 계정 데이터를 분리한 구조  
 - 다중 인증 방식 지원 (패스워드, OAuth, OTP 등)  
 - Docker 및 Docker-Compose 기반 손쉬운 배포 환경  
 
@@ -48,3 +66,5 @@ docker-compose -f docker-compose-dev.yml up -d
 docker-compose -f docker-compose-dev.yml down
 
 docker-compose -f docker-compose-dev.yml down --rmi all
+
+```
