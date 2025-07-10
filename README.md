@@ -1,8 +1,8 @@
 # L0G1N
 
 <div align="center" style="display:flex; margin-bottom:10px">
-  <img src="logo_transparent.png" alt="L0G1N Logo" width="300">
   <img src="logo.png" alt="L0G1N Logo" width="300">
+  <img src="logo_transparent.png" alt="L0G1N Logo" width="300">
 </div>
 
 > **From Zero to One, Simply Secure.**  
