@@ -13,6 +13,9 @@
   
   <!-- Toastify-js CSS -->
   <link rel="stylesheet" href="<%= baseUrl %>/vendors/toastify/toastify.css" />
+  
+  <!-- Tabulator CSS -->
+  <link rel="stylesheet" href="<%= baseUrl %>/vendors/tabulator/css/tabulator_site_dark.min.css" />
 
   <% if (typeof customCss !== 'undefined' && customCss) { %>
     <link rel="stylesheet" href="/css/<%= customCss %>" />
@@ -40,6 +43,9 @@
   <!-- Toastify-js JS -->
   <script src="<%= baseUrl %>/vendors/toastify/toastify.js"></script>
   
+  <!-- Tabulator JS -->
+  <script src="<%= baseUrl %>/vendors/tabulator/js/tabulator.min.js"></script>
+  
   <!-- Prism.js -->
   <script src="<%= baseUrl %>/vendors/prism/prism.min.js"></script>
   <script>
@@ -49,14 +55,33 @@
       // 사용자 선택을 localStorage에 저장
       const isLightMode = document.body.classList.contains('light-mode');
       localStorage.setItem('theme', isLightMode ? 'light' : 'dark');
+      
+      // Tabulator 테마 변경
+      updateTabulatorTheme(isLightMode);
+    }
+    
+    function updateTabulatorTheme(isLightMode) {
+      const tabulatorCss = document.querySelector('link[href*="tabulator"]');
+      if (tabulatorCss) {
+        if (isLightMode) {
+          tabulatorCss.href = '<%= baseUrl %>/vendors/tabulator/css/tabulator_site.min.css';
+        } else {
+          tabulatorCss.href = '<%= baseUrl %>/vendors/tabulator/css/tabulator_site_dark.min.css';
+        }
+      }
     }
     
     // 페이지 로드 시 저장된 테마 적용
     document.addEventListener('DOMContentLoaded', function() {
       const savedTheme = localStorage.getItem('theme');
-      if (savedTheme === 'light') {
+      const isLightMode = savedTheme === 'light';
+      
+      if (isLightMode) {
         document.body.classList.add('light-mode');
       }
+      
+      // Tabulator 테마 설정
+      updateTabulatorTheme(isLightMode);
       
       // Prism.js 하이라이팅 실행
       if (typeof Prism !== 'undefined') {

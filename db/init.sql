@@ -326,6 +326,11 @@ COPY public.l0g1n_account_profile (account_id, nickname, extra_json) FROM stdin;
 --
 
 COPY public.l0g1n_api_code (api_type_id, api_type, api_extra) FROM stdin;
+1	Google	\N
+2	Apple	\N
+3	Github	\N
+4	Naver	\N
+5	Kakao	\N
 \.
 
 
@@ -372,7 +377,7 @@ SELECT pg_catalog.setval('public.l0g1n_account_auth_auth_id_seq', 1, false);
 -- Name: l0g1n_api_code_api_type_id_seq; Type: SEQUENCE SET; Schema: public; Owner: l0g1n_admin
 --
 
-SELECT pg_catalog.setval('public.l0g1n_api_code_api_type_id_seq', 1, false);
+SELECT pg_catalog.setval('public.l0g1n_api_code_api_type_id_seq', 5, true);
 
 
 --

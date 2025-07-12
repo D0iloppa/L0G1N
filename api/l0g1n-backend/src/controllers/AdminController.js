@@ -90,6 +90,76 @@ const AdminController = {
     }
   },
 
+  // 프로젝트 상세 페이지
+  showProjectDetail: async (req, res) => {
+    if (!req.session.admin) return res.redirect('/admin/login');
+    
+    const { projectCode } = req.params;
+    
+    try {
+      const project = await AdminService.getProjectByCode(projectCode);
+      if (!project) {
+        return res.status(404).render('error', { 
+          code: 404, 
+          message: '프로젝트를 찾을 수 없습니다.',
+          layout: false 
+        });
+      }
+      
+      const projectApis = await AdminService.getProjectApis(project.project_id);
+      const authCodes = await AdminService.getAuthCodes();
+      
+      res.render('admin/project_detail', { 
+        project, 
+        projectApis, 
+        authCodes,
+        layout: 'layout' 
+      });
+    } catch (error) {
+      console.error('Project detail error:', error);
+      res.status(500).render('error', { 
+        code: 500, 
+        message: '프로젝트 정보를 불러오는 중 오류가 발생했습니다.',
+        layout: false 
+      });
+    }
+  },
+
+  // 프로젝트에 API 추가
+  addProjectApi: async (req, res) => {
+    if (!req.session.admin) {
+      return res.status(401).json({ error: 'Unauthorized' });
+    }
+    
+    const { projectCode } = req.params;
+    const { apiCode } = req.body;
+    
+    try {
+      await AdminService.addProjectApi(projectCode, apiCode);
+      res.json({ success: true, message: 'API가 성공적으로 추가되었습니다.' });
+    } catch (error) {
+      console.error('Add project API error:', error);
+      res.status(500).json({ error: 'API 추가 중 오류가 발생했습니다.' });
+    }
+  },
+
+  // 프로젝트에서 API 제거
+  removeProjectApi: async (req, res) => {
+    if (!req.session.admin) {
+      return res.status(401).json({ error: 'Unauthorized' });
+    }
+    
+    const { projectCode, apiId } = req.params;
+    
+    try {
+      await AdminService.removeProjectApi(projectCode, apiId);
+      res.json({ success: true, message: 'API가 성공적으로 제거되었습니다.' });
+    } catch (error) {
+      console.error('Remove project API error:', error);
+      res.status(500).json({ error: 'API 제거 중 오류가 발생했습니다.' });
+    }
+  },
+
   // API: 전체 프로젝트 목록 조회 (모달용)
   getAllProjectsApi: async (req, res) => {
     if (!req.session.admin) {
@@ -102,6 +172,39 @@ const AdminController = {
     } catch (error) {
       console.error('Get all projects API error:', error);
       res.status(500).json({ error: '프로젝트 목록을 불러오는 중 오류가 발생했습니다.' });
+    }
+  },
+
+  // API: 프로젝트 사용자 목록 조회
+  getProjectUsersApi: async (req, res) => {
+    if (!req.session.admin) {
+      return res.status(401).json({ error: 'Unauthorized' });
+    }
+    
+    const { projectCode } = req.params;
+    const { page = 1, size = 50 } = req.query;
+    
+    try {
+      const users = await AdminService.getProjectUsers(projectCode, parseInt(page), parseInt(size));
+      res.json({ users });
+    } catch (error) {
+      console.error('Get project users API error:', error);
+      res.status(500).json({ error: '사용자 목록을 불러오는 중 오류가 발생했습니다.' });
+    }
+  },
+
+  // API: 인증 코드 목록 조회
+  getAuthCodesApi: async (req, res) => {
+    if (!req.session.admin) {
+      return res.status(401).json({ error: 'Unauthorized' });
+    }
+    
+    try {
+      const authCodes = await AdminService.getAuthCodes();
+      res.json({ authCodes });
+    } catch (error) {
+      console.error('Get auth codes API error:', error);
+      res.status(500).json({ error: '인증 코드 목록을 불러오는 중 오류가 발생했습니다.' });
     }
   },
 };

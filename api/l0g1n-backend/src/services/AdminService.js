@@ -261,6 +261,171 @@ const AdminService = {
   },
 
   /**
+   * 프로젝트 코드로 프로젝트 조회
+   * @param {string} projectCode - 프로젝트 코드
+   * @returns {Promise<Object>} - 프로젝트 정보
+   */
+  getProjectByCode: async (projectCode) => {
+    try {
+      const query = 'SELECT * FROM l0g1n_project WHERE project_code = $1';
+      const result = await db.query(query, [projectCode]);
+      return result.rows[0];
+    } catch (error) {
+      console.error('AdminService.getProjectByCode error:', error);
+      throw error;
+    }
+  },
+
+  /**
+   * 프로젝트 API 목록 조회
+   * @param {number} projectId - 프로젝트 ID
+   * @returns {Promise<Array>} - API 목록
+   */
+  getProjectApis: async (projectId) => {
+    try {
+      const query = `
+        SELECT 
+          lpa.api_id,
+          lpa.project_id,
+          lpa.api_code,
+          lpa.created_at,
+          lac.api_name,
+          lac.api_description
+        FROM l0g1n_project_api lpa
+        LEFT JOIN l0g1n_api_code lac ON lpa.api_code = lac.api_code
+        WHERE lpa.project_id = $1
+        ORDER BY lpa.created_at DESC
+      `;
+      const result = await db.query(query, [projectId]);
+      return result.rows;
+    } catch (error) {
+      console.error('AdminService.getProjectApis error:', error);
+      throw error;
+    }
+  },
+
+  /**
+   * 인증 코드 목록 조회
+   * @returns {Promise<Array>} - 인증 코드 목록
+   */
+  getAuthCodes: async () => {
+    try {
+      const query = 'SELECT * FROM l0g1n_api_code ORDER BY api_name';
+      const result = await db.query(query);
+      return result.rows;
+    } catch (error) {
+      console.error('AdminService.getAuthCodes error:', error);
+      throw error;
+    }
+  },
+
+  /**
+   * 프로젝트에 API 추가
+   * @param {string} projectCode - 프로젝트 코드
+   * @param {string} apiCode - API 코드
+   * @returns {Promise<Object>} - 추가된 API 정보
+   */
+  addProjectApi: async (projectCode, apiCode) => {
+    try {
+      // 프로젝트 ID 조회
+      const projectQuery = 'SELECT project_id FROM l0g1n_project WHERE project_code = $1';
+      const projectResult = await db.query(projectQuery, [projectCode]);
+      
+      if (projectResult.rows.length === 0) {
+        throw new Error('프로젝트를 찾을 수 없습니다.');
+      }
+      
+      const projectId = projectResult.rows[0].project_id;
+      
+      // 이미 추가된 API인지 확인
+      const existsQuery = 'SELECT COUNT(*) as count FROM l0g1n_project_api WHERE project_id = $1 AND api_code = $2';
+      const existsResult = await db.query(existsQuery, [projectId, apiCode]);
+      
+      if (parseInt(existsResult.rows[0].count) > 0) {
+        throw new Error('이미 추가된 API입니다.');
+      }
+      
+      // API 추가
+      const insertQuery = `
+        INSERT INTO l0g1n_project_api (project_id, api_code) 
+        VALUES ($1, $2) 
+        RETURNING *
+      `;
+      
+      const result = await db.query(insertQuery, [projectId, apiCode]);
+      return result.rows[0];
+    } catch (error) {
+      console.error('AdminService.addProjectApi error:', error);
+      throw error;
+    }
+  },
+
+  /**
+   * 프로젝트에서 API 제거
+   * @param {string} projectCode - 프로젝트 코드
+   * @param {number} apiId - API ID
+   * @returns {Promise<void>}
+   */
+  removeProjectApi: async (projectCode, apiId) => {
+    try {
+      // 프로젝트 ID 조회
+      const projectQuery = 'SELECT project_id FROM l0g1n_project WHERE project_code = $1';
+      const projectResult = await db.query(projectQuery, [projectCode]);
+      
+      if (projectResult.rows.length === 0) {
+        throw new Error('프로젝트를 찾을 수 없습니다.');
+      }
+      
+      const projectId = projectResult.rows[0].project_id;
+      
+      // API 제거
+      const deleteQuery = 'DELETE FROM l0g1n_project_api WHERE project_id = $1 AND api_id = $2';
+      const result = await db.query(deleteQuery, [projectId, apiId]);
+      
+      if (result.rowCount === 0) {
+        throw new Error('제거할 API를 찾을 수 없습니다.');
+      }
+    } catch (error) {
+      console.error('AdminService.removeProjectApi error:', error);
+      throw error;
+    }
+  },
+
+  /**
+   * 프로젝트 사용자 목록 조회 (가상 스크롤링용)
+   * @param {string} projectCode - 프로젝트 코드
+   * @param {number} page - 페이지 번호
+   * @param {number} size - 페이지 크기
+   * @returns {Promise<Array>} - 사용자 목록
+   */
+  getProjectUsers: async (projectCode, page = 1, size = 50) => {
+    try {
+      const offset = (page - 1) * size;
+      
+      const query = `
+        SELECT 
+          la.account_id,
+          la.account_type,
+          la.status,
+          la.created_at,
+          lap.nickname,
+          lap.extra_json
+        FROM l0g1n_account la
+        LEFT JOIN l0g1n_account_profile lap ON la.account_id = lap.account_id
+        WHERE la.project_id = (SELECT project_id FROM l0g1n_project WHERE project_code = $1)
+        ORDER BY la.created_at DESC
+        LIMIT $2 OFFSET $3
+      `;
+      
+      const result = await db.query(query, [projectCode, size, offset]);
+      return result.rows;
+    } catch (error) {
+      console.error('AdminService.getProjectUsers error:', error);
+      throw error;
+    }
+  },
+
+  /**
    * 계정 프로필 정보 생성/업데이트
    * @param {number} accountId - 계정 ID
    * @param {string} nickname - 닉네임

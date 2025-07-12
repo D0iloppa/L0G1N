@@ -1,0 +1,505 @@
+<% title = '프로젝트 상세' %>
+
+<style>
+.project-detail-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 20px;
+}
+
+.project-header {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  padding: 30px;
+  border-radius: 15px;
+  margin-bottom: 30px;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+}
+
+.project-info {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+}
+
+.project-basic {
+  flex: 1;
+}
+
+.project-name {
+  font-size: 28px;
+  font-weight: 600;
+  margin-bottom: 10px;
+}
+
+.project-code {
+  background: rgba(255,255,255,0.2);
+  padding: 8px 16px;
+  border-radius: 20px;
+  font-family: monospace;
+  font-size: 14px;
+  display: inline-block;
+  margin-bottom: 15px;
+}
+
+.project-meta {
+  opacity: 0.9;
+  font-size: 14px;
+}
+
+.project-status {
+  display: inline-block;
+  padding: 6px 16px;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 500;
+  margin-left: 10px;
+}
+
+.status-active {
+  background: rgba(40, 167, 69, 0.3);
+  color: #28a745;
+}
+
+.status-inactive {
+  background: rgba(220, 53, 69, 0.3);
+  color: #dc3545;
+}
+
+.back-btn {
+  background: rgba(255,255,255,0.2);
+  color: white;
+  border: none;
+  padding: 12px 24px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 14px;
+  transition: all 0.3s ease;
+  text-decoration: none;
+  display: inline-block;
+}
+
+.back-btn:hover {
+  background: rgba(255,255,255,0.3);
+  transform: translateY(-2px);
+}
+
+.section {
+  background: white;
+  border-radius: 15px;
+  padding: 30px;
+  box-shadow: 0 5px 20px rgba(0,0,0,0.08);
+  margin-bottom: 30px;
+}
+
+.section-title {
+  font-size: 20px;
+  font-weight: 600;
+  color: #333;
+  margin-bottom: 20px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.api-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 20px;
+  margin-bottom: 20px;
+}
+
+.api-card {
+  background: #f8f9fa;
+  border: 1px solid #e9ecef;
+  border-radius: 12px;
+  padding: 20px;
+  transition: all 0.3s ease;
+}
+
+.api-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+}
+
+.api-name {
+  font-weight: 600;
+  color: #333;
+  font-size: 16px;
+  margin-bottom: 8px;
+}
+
+.api-code {
+  background: #667eea;
+  color: white;
+  padding: 4px 8px;
+  border-radius: 6px;
+  font-size: 12px;
+  font-family: monospace;
+  display: inline-block;
+  margin-bottom: 10px;
+}
+
+.api-description {
+  color: #6c757d;
+  font-size: 14px;
+  margin-bottom: 15px;
+}
+
+.api-actions {
+  display: flex;
+  gap: 10px;
+}
+
+.remove-api-btn {
+  background: #dc3545;
+  color: white;
+  border: none;
+  padding: 6px 12px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 12px;
+  transition: all 0.3s ease;
+}
+
+.remove-api-btn:hover {
+  background: #c82333;
+}
+
+.add-api-section {
+  background: #e3f2fd;
+  border: 1px solid #bbdefb;
+  border-radius: 12px;
+  padding: 20px;
+  margin-top: 20px;
+}
+
+.add-api-form {
+  display: flex;
+  gap: 15px;
+  align-items: center;
+}
+
+.api-select {
+  flex: 1;
+  padding: 10px 15px;
+  border: 2px solid #e9ecef;
+  border-radius: 8px;
+  font-size: 14px;
+  background: white;
+}
+
+.api-select:focus {
+  outline: none;
+  border-color: #667eea;
+}
+
+.add-api-btn {
+  background: #28a745;
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 14px;
+  transition: all 0.3s ease;
+}
+
+.add-api-btn:hover {
+  background: #218838;
+  transform: translateY(-2px);
+}
+
+.users-section {
+  margin-top: 30px;
+}
+
+.users-table-container {
+  margin-top: 20px;
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+/* 다크모드 스타일 */
+body:not(.light-mode) .section {
+  background: #2a2a2a;
+  color: #ffffff;
+}
+
+body:not(.light-mode) .section-title {
+  color: #ffffff;
+}
+
+body:not(.light-mode) .api-card {
+  background: #1a1a1a;
+  border: 1px solid #444;
+  color: #ffffff;
+}
+
+body:not(.light-mode) .api-name {
+  color: #ffffff;
+}
+
+body:not(.light-mode) .api-description {
+  color: #adb5bd;
+}
+
+body:not(.light-mode) .add-api-section {
+  background: #1a1a1a;
+  border: 1px solid #444;
+}
+
+body:not(.light-mode) .api-select {
+  background: #2a2a2a;
+  color: #ffffff;
+  border-color: #444;
+}
+
+body:not(.light-mode) .api-select:focus {
+  border-color: #667eea;
+}
+
+.empty-apis {
+  text-align: center;
+  padding: 40px;
+  color: #6c757d;
+}
+
+body:not(.light-mode) .empty-apis {
+  color: #adb5bd;
+}
+</style>
+
+<div class="project-detail-container">
+  <!-- 프로젝트 헤더 -->
+  <div class="project-header">
+    <div class="project-info">
+      <div class="project-basic">
+        <h1 class="project-name"><%= project.project_name %></h1>
+        <div class="project-code"><%= project.project_code %></div>
+        <div class="project-meta">
+          생성일: <%= new Date(project.created_at).toLocaleDateString('ko-KR') %>
+          <span class="project-status <%= project.status === 'active' ? 'status-active' : 'status-inactive' %>">
+            <%= project.status || 'active' %>
+          </span>
+        </div>
+      </div>
+      <a href="/admin/dashboard" class="back-btn">
+        ← 대시보드로 돌아가기
+      </a>
+    </div>
+  </div>
+
+  <!-- API 관리 섹션 -->
+  <div class="section">
+    <h2 class="section-title">🔌 인증 API 관리</h2>
+    
+    <!-- 기본 API 정보 -->
+    <div class="api-info" style="margin-bottom: 20px; padding: 15px; background: #f8f9fa; border-radius: 8px;">
+      <h4 style="margin: 0 0 10px 0; color: #333;">기본 제공 인증</h4>
+      <div style="display: flex; gap: 15px; flex-wrap: wrap;">
+        <span style="background: #28a745; color: white; padding: 6px 12px; border-radius: 6px; font-size: 12px;">ID/PW</span>
+        <span style="background: #17a2b8; color: white; padding: 6px 12px; border-radius: 6px; font-size: 12px;">Email/PW</span>
+      </div>
+    </div>
+
+    <!-- 추가된 API 목록 -->
+    <% if (projectApis && projectApis.length > 0) { %>
+      <div class="api-grid">
+        <% projectApis.forEach(api => { %>
+          <div class="api-card">
+            <div class="api-name"><%= api.api_name || api.api_code %></div>
+            <div class="api-code"><%= api.api_code %></div>
+            <% if (api.api_description) { %>
+              <div class="api-description"><%= api.api_description %></div>
+            <% } %>
+            <div class="api-actions">
+              <button class="remove-api-btn" onclick="removeApi('<%= api.api_id %>')">
+                제거
+              </button>
+            </div>
+          </div>
+        <% }) %>
+      </div>
+    <% } else { %>
+      <div class="empty-apis">
+        <h4>📝 추가된 API가 없습니다</h4>
+        <p>아래에서 추가 인증 방식을 선택하여 프로젝트에 추가할 수 있습니다.</p>
+      </div>
+    <% } %>
+
+    <!-- API 추가 섹션 -->
+    <div class="add-api-section">
+      <h4 style="margin: 0 0 15px 0;">➕ 추가 인증 방식</h4>
+      <div class="add-api-form">
+        <select id="apiSelect" class="api-select">
+          <option value="">인증 방식을 선택하세요</option>
+          <% authCodes.forEach(code => { %>
+            <option value="<%= code.api_code %>"><%= code.api_name %> - <%= code.api_description %></option>
+          <% }) %>
+        </select>
+        <button class="add-api-btn" onclick="addApi()">
+          추가하기
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 사용자 목록 섹션 -->
+  <div class="section users-section">
+    <h2 class="section-title">👥 사용자 목록</h2>
+    <div class="users-table-container">
+      <div id="usersTable"></div>
+    </div>
+  </div>
+</div>
+
+<script>
+// API 추가 함수
+async function addApi() {
+  const apiCode = document.getElementById('apiSelect').value;
+  
+  if (!apiCode) {
+    showToast('인증 방식을 선택해주세요.', 'warning');
+    return;
+  }
+  
+  try {
+    const response = await fetch(`/admin/project/<%= project.project_code %>/api/add`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ apiCode })
+    });
+    
+    const result = await response.json();
+    
+    if (result.success) {
+      showToast(result.message, 'success');
+      setTimeout(() => {
+        window.location.reload();
+      }, 1500);
+    } else {
+      showToast(result.error, 'error');
+    }
+  } catch (error) {
+    console.error('Add API error:', error);
+    showToast('API 추가 중 오류가 발생했습니다.', 'error');
+  }
+}
+
+// API 제거 함수
+async function removeApi(apiId) {
+  const result = await showConfirm(
+    'API 제거',
+    '이 인증 방식을 프로젝트에서 제거하시겠습니까?',
+    'warning'
+  );
+  
+  if (result.isConfirmed) {
+    try {
+      const response = await fetch(`/admin/project/<%= project.project_code %>/api/${apiId}`, {
+        method: 'DELETE'
+      });
+      
+      const result = await response.json();
+      
+      if (result.success) {
+        showToast(result.message, 'success');
+        setTimeout(() => {
+          window.location.reload();
+        }, 1500);
+      } else {
+        showToast(result.error, 'error');
+      }
+    } catch (error) {
+      console.error('Remove API error:', error);
+      showToast('API 제거 중 오류가 발생했습니다.', 'error');
+    }
+  }
+}
+
+// Tabulator 테이블 초기화
+document.addEventListener('DOMContentLoaded', function() {
+  const table = new Tabulator("#usersTable", {
+    ajaxURL: `/admin/api/project/<%= project.project_code %>/users`,
+    ajaxParams: {
+      page: 1,
+      size: 50
+    },
+    layout: "fitColumns",
+    pagination: true,
+    paginationSize: 20,
+    paginationSizeSelector: [10, 20, 50, 100],
+    virtualDom: true,
+    height: 400,
+    columns: [
+      {
+        title: "계정 ID",
+        field: "account_id",
+        width: 100,
+        formatter: function(cell) {
+          return `<code>${cell.getValue()}</code>`;
+        }
+      },
+      {
+        title: "계정 타입",
+        field: "account_type",
+        width: 120,
+        formatter: function(cell) {
+          const type = cell.getValue();
+          const colors = {
+            'user': '#28a745',
+            'admin': '#dc3545',
+            'guest': '#ffc107'
+          };
+          return `<span style="background: ${colors[type] || '#6c757d'}; color: white; padding: 4px 8px; border-radius: 4px; font-size: 12px;">${type}</span>`;
+        }
+      },
+      {
+        title: "닉네임",
+        field: "nickname",
+        width: 150,
+        formatter: function(cell) {
+          return cell.getValue() || '-';
+        }
+      },
+      {
+        title: "상태",
+        field: "status",
+        width: 100,
+        formatter: function(cell) {
+          const status = cell.getValue();
+          const isActive = status === 'active';
+          return `<span style="background: ${isActive ? '#d4edda' : '#f8d7da'}; color: ${isActive ? '#155724' : '#721c24'}; padding: 4px 8px; border-radius: 4px; font-size: 12px;">${status}</span>`;
+        }
+      },
+      {
+        title: "가입일",
+        field: "created_at",
+        width: 150,
+        formatter: function(cell) {
+          return new Date(cell.getValue()).toLocaleDateString('ko-KR');
+        }
+      },
+      {
+        title: "액션",
+        width: 100,
+        formatter: function(cell) {
+          const accountId = cell.getRow().getData().account_id;
+          return `<button onclick="viewUserDetail(${accountId})" style="background: #667eea; color: white; border: none; padding: 4px 8px; border-radius: 4px; cursor: pointer; font-size: 12px;">상세보기</button>`;
+        }
+      }
+    ],
+    ajaxResponse: function(url, params, response) {
+      return response.users;
+    }
+  });
+});
+
+// 사용자 상세보기 함수 (향후 구현)
+function viewUserDetail(accountId) {
+  showToast(`계정 ID ${accountId}의 상세 정보를 보는 기능은 향후 구현 예정입니다.`, 'info');
+}
+</script> 
