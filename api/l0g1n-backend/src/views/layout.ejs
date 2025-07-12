@@ -8,7 +8,11 @@
   <link href="<%= baseUrl %>/vendors/prism/prism.min.css" rel="stylesheet" />
   <link href="<%= baseUrl %>/css/common.css" rel="stylesheet" />
   
-
+  <!-- SweetAlert2 CSS -->
+  <link rel="stylesheet" href="<%= baseUrl %>/vendors/sweetalert2/sweetalert2.min.css" />
+  
+  <!-- Toastify-js CSS -->
+  <link rel="stylesheet" href="<%= baseUrl %>/vendors/toastify/toastify.css" />
 
   <% if (typeof customCss !== 'undefined' && customCss) { %>
     <link rel="stylesheet" href="/css/<%= customCss %>" />
@@ -30,6 +34,13 @@
   </div>
 
 
+  <!-- SweetAlert2 JS -->
+  <script src="<%= baseUrl %>/vendors/sweetalert2/sweetalert2.all.min.js"></script>
+  
+  <!-- Toastify-js JS -->
+  <script src="<%= baseUrl %>/vendors/toastify/toastify.js"></script>
+  
+  <!-- Prism.js -->
   <script src="<%= baseUrl %>/vendors/prism/prism.min.js"></script>
   <script>
     function toggleTheme() {
@@ -52,6 +63,59 @@
         Prism.highlightAll();
       }
     });
+    
+    // 전역 유틸리티 함수들
+    window.showToast = function(message, type = 'success') {
+      const backgroundColor = type === 'success' ? '#28a745' : 
+                           type === 'error' ? '#dc3545' : 
+                           type === 'warning' ? '#ffc107' : '#17a2b8';
+      
+      Toastify({
+        text: message,
+        duration: 3000,
+        gravity: "top",
+        position: "right",
+        backgroundColor: backgroundColor,
+        stopOnFocus: true,
+        close: true,
+        style: {
+          borderRadius: "8px",
+          fontSize: "14px",
+          fontWeight: "500"
+        }
+      }).showToast();
+    };
+    
+    window.showConfirm = function(title, text, icon = 'question') {
+      return Swal.fire({
+        title: title,
+        text: text,
+        icon: icon,
+        showCancelButton: true,
+        confirmButtonColor: '#667eea',
+        cancelButtonColor: '#6c757d',
+        confirmButtonText: '확인',
+        cancelButtonText: '취소'
+      });
+    };
+    
+    window.showSuccess = function(title, text = '') {
+      return Swal.fire({
+        title: title,
+        text: text,
+        icon: 'success',
+        confirmButtonColor: '#28a745'
+      });
+    };
+    
+    window.showError = function(title, text = '') {
+      return Swal.fire({
+        title: title,
+        text: text,
+        icon: 'error',
+        confirmButtonColor: '#dc3545'
+      });
+    };
   </script>
 
 

@@ -331,45 +331,66 @@ document.querySelectorAll('.project-type-card').forEach(card => {
 });
 
 // 폼 제출 전 유효성 검사
-document.getElementById('projectForm').addEventListener('submit', function(e) {
+document.getElementById('projectForm').addEventListener('submit', async function(e) {
+  e.preventDefault();
+  
   const projectName = document.getElementById('project_name').value.trim();
   const projectCode = document.getElementById('project_code').value.trim();
   
   if (!projectName) {
-    alert('프로젝트 이름을 입력해주세요.');
-    e.preventDefault();
+    showToast('프로젝트 이름을 입력해주세요.', 'error');
     return;
   }
   
   if (!projectCode) {
-    alert('프로젝트 코드를 입력해주세요.');
-    e.preventDefault();
+    showToast('프로젝트 코드를 입력해주세요.', 'error');
     return;
   }
   
   // 프로젝트 코드 유효성 검사
   const codePattern = /^[a-z0-9_]+$/;
   if (!codePattern.test(projectCode)) {
-    alert('프로젝트 코드는 영문 소문자, 숫자, 언더스코어만 사용 가능합니다.');
-    e.preventDefault();
+    showToast('프로젝트 코드는 영문 소문자, 숫자, 언더스코어만 사용 가능합니다.', 'error');
     return;
   }
   
   // 확인 메시지
-  if (!confirm(`프로젝트 "${projectName}" (코드: ${projectCode})을 생성하시겠습니까?`)) {
-    e.preventDefault();
-    return;
+  const result = await showConfirm(
+    '프로젝트 생성',
+    `프로젝트 "${projectName}" (코드: ${projectCode})을 생성하시겠습니까?`,
+    'question'
+  );
+  
+  if (result.isConfirmed) {
+    // 폼 제출
+    this.submit();
   }
 });
 
-// 입력 필드 포커스 효과
-document.querySelectorAll('input, select').forEach(input => {
-  input.addEventListener('focus', function() {
-    this.parentElement.style.transform = 'translateY(-2px)';
-  });
-  
-  input.addEventListener('blur', function() {
-    this.parentElement.style.transform = 'translateY(0)';
-  });
-});
+    // 입력 필드 포커스 효과
+    document.querySelectorAll('input, select').forEach(input => {
+      input.addEventListener('focus', function() {
+        this.parentElement.style.transform = 'translateY(-2px)';
+      });
+      
+      input.addEventListener('blur', function() {
+        this.parentElement.style.transform = 'translateY(0)';
+      });
+    });
+    
+    // 성공/에러 메시지 처리
+    var successMessage = '<%= typeof success !== "undefined" ? success : "" %>';
+    var errorMessage = '<%= typeof error !== "undefined" ? error : "" %>';
+    
+    if (successMessage) {
+      showToast(successMessage, 'success');
+      // 3초 후 대시보드로 이동
+      setTimeout(function() {
+        window.location.href = '/admin/dashboard';
+      }, 3000);
+    }
+    
+    if (errorMessage) {
+      showToast(errorMessage, 'error');
+    }
 </script>

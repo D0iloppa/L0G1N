@@ -72,7 +72,10 @@ const AdminController = {
       
       // 프로젝트 생성
       await AdminService.createProject(code, name);
-      res.redirect('/admin/dashboard');
+      res.render('admin/project_create', { 
+        success: '프로젝트가 성공적으로 생성되었습니다!', 
+        layout: 'layout' 
+      });
     } catch (error) {
       console.error('Create project error:', error);
       res.render('admin/project_create', { error: '프로젝트 생성 중 오류가 발생했습니다.', layout: 'layout' });
