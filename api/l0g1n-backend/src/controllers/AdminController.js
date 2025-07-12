@@ -61,17 +61,25 @@ const AdminController = {
   },
 
   createProject: async (req, res) => {
-    const { code, name } = req.body;
+    const { project_code, project_name, status, project_type } = req.body;
     
     try {
+      // 필수 필드 검증
+      if (!project_code || !project_name) {
+        return res.render('admin/project_create', { 
+          error: '프로젝트 코드와 프로젝트 이름을 모두 입력해주세요.', 
+          layout: 'layout' 
+        });
+      }
+      
       // 프로젝트 코드 중복 확인
-      const exists = await AdminService.isProjectExists(code);
+      const exists = await AdminService.isProjectExists(project_code);
       if (exists) {
         return res.render('admin/project_create', { error: '이미 존재하는 프로젝트 코드입니다.', layout: 'layout' });
       }
       
       // 프로젝트 생성
-      await AdminService.createProject(code, name);
+      await AdminService.createProjectExtended(project_code, project_name, status || 'active');
       res.render('admin/project_create', { 
         success: '프로젝트가 성공적으로 생성되었습니다!', 
         layout: 'layout' 

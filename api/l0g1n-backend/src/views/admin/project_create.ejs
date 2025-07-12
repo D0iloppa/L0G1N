@@ -1,5 +1,6 @@
 <% title = '프로젝트 생성' %>
 
+
 <style>
 .project-create-container {
   max-width: 800px;
@@ -265,6 +266,7 @@
             <p>REST API, GraphQL</p>
           </div>
         </div>
+        <input type="hidden" id="project_type" name="project_type" value="web" />
       </div>
 
       <!-- 상태 선택 -->
@@ -303,7 +305,47 @@
   </div>
 </div>
 
+<!-- SweetAlert2 JS -->
+<script src="/vendors/sweetalert2/sweetalert2.all.min.js"></script>
+<!-- Toastify-js JS -->
+<script src="/vendors/toastify/toastify.js"></script>
+
 <script>
+// 전역 유틸리티 함수들
+window.showToast = function(message, type = 'success') {
+  const backgroundColor = type === 'success' ? '#28a745' : 
+                       type === 'error' ? '#dc3545' : 
+                       type === 'warning' ? '#ffc107' : '#17a2b8';
+  
+  Toastify({
+    text: message,
+    duration: 3000,
+    gravity: "top",
+    position: "right",
+    backgroundColor: backgroundColor,
+    stopOnFocus: true,
+    close: true,
+    style: {
+      borderRadius: "8px",
+      fontSize: "14px",
+      fontWeight: "500"
+    }
+  }).showToast();
+};
+
+window.showConfirm = function(title, text, icon = 'question') {
+  return Swal.fire({
+    title: title,
+    text: text,
+    icon: icon,
+    showCancelButton: true,
+    confirmButtonColor: '#667eea',
+    cancelButtonColor: '#6c757d',
+    confirmButtonText: '확인',
+    cancelButtonText: '취소'
+  });
+};
+
 // 프로젝트 코드 실시간 미리보기
 document.getElementById('project_code').addEventListener('input', function(e) {
   const code = e.target.value;
@@ -327,6 +369,10 @@ document.querySelectorAll('.project-type-card').forEach(card => {
     
     // 현재 카드 선택
     this.classList.add('selected');
+    
+    // hidden input 업데이트
+    const projectType = this.getAttribute('data-type');
+    document.getElementById('project_type').value = projectType;
   });
 });
 
