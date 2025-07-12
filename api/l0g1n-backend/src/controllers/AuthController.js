@@ -56,6 +56,7 @@ const AuthController = {
    *         description: 서버 오류
    */
   register: async (req, res) => {
+
     try {
       const { project_id, login_type, login_id, auth_key, profile } = req.body;
       if (!project_id || !login_type || !login_id || !auth_key) {
