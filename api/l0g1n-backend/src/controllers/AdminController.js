@@ -1,31 +1,40 @@
-const db = require('../db/dbClient');
+const AdminService = require('../services/AdminService');
 
 const AdminController = {
   showLoginForm: (req, res) => {
     res.render('admin/login', { error: null });
   },
 
-  processLogin: (req, res) => {
+  processLogin: async (req, res) => {
     const { username, password } = req.body;
-    // 임시: 고정값 로그인
-    if (username === 'l0gin' && password === '1234') {
-      req.session.admin = true;
-      res.redirect('/admin/dashboard');
-    } else {
-      res.render('admin/login', { error: '로그인 실패' });
+    
+    try {
+      // AdminService를 사용한 인증
+      const admin = await AdminService.authenticateAdmin(username.trim(), password.trim());
+      
+      if (admin) {
+        req.session.admin = true;
+        req.session.adminInfo = admin;
+        res.redirect('/admin/dashboard');
+      } else {
+        res.render('admin/login', { error: '로그인 실패: 잘못된 로그인 정보입니다.' });
+      }
+    } catch (error) {
+      console.error('Login error:', error);
+      res.render('admin/login', { error: '로그인 처리 중 오류가 발생했습니다.' });
     }
   },
 
   dashboard: async (req, res) => {
-    if (!req.session.admin) return res.redirect('admin/login');
+    if (!req.session.admin) return res.redirect('/admin/login');
     
-    /*
-    const result = await db.query('SELECT * FROM l0g1n_project');
-    if (result.rowCount === 0) {
-      return res.redirect('/admin/project/create');
+    try {
+      const projects = await AdminService.getAllProjects();
+      res.render('admin/dashboard', { projects });
+    } catch (error) {
+      console.error('Dashboard error:', error);
+      res.render('admin/dashboard', { projects: [], error: '프로젝트 목록을 불러오는 중 오류가 발생했습니다.' });
     }
-    */
-    res.render('admin/dashboard', { projects: result.rows });
   },
 
   showCreateProjectForm: (req, res) => {
@@ -34,14 +43,20 @@ const AdminController = {
 
   createProject: async (req, res) => {
     const { code, name } = req.body;
+    
     try {
-      await db.query(
-        'INSERT INTO l0g1n_project (project_code, project_name) VALUES ($1, $2)',
-        [code, name]
-      );
+      // 프로젝트 코드 중복 확인
+      const exists = await AdminService.isProjectExists(code);
+      if (exists) {
+        return res.render('admin/project_create', { error: '이미 존재하는 프로젝트 코드입니다.' });
+      }
+      
+      // 프로젝트 생성
+      await AdminService.createProject(code, name);
       res.redirect('/admin/dashboard');
-    } catch (err) {
-      res.render('admin/project_create', { error: '프로젝트 생성 실패' });
+    } catch (error) {
+      console.error('Create project error:', error);
+      res.render('admin/project_create', { error: '프로젝트 생성 중 오류가 발생했습니다.' });
     }
   },
 };
