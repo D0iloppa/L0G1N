@@ -1,25 +1,11 @@
 const AuthService = require('../services/AuthService');
 
-/**
- * @openapi
- * /login:
- *   get:
- *     summary: 로그인 페이지 렌더링
- *     tags:
- *       - Auth
- *     responses:
- *       200:
- *         description: 로그인 폼 HTML 페이지
- */
-exports.showLoginForm = (req, res) => {
-    res.render('login');
-  };
-  
+const AuthController = {
   /**
    * @openapi
-   * /login:
+   * /api/register:
    *   post:
-   *     summary: 로그인 처리
+   *     summary: 회원가입
    *     tags:
    *       - Auth
    *     requestBody:
@@ -29,38 +15,45 @@ exports.showLoginForm = (req, res) => {
    *           schema:
    *             type: object
    *             properties:
+   *               project_id:
+   *                 type: integer
+   *                 example: 1
+   *               login_type:
+   *                 type: string
+   *                 example: email
    *               login_id:
    *                 type: string
-   *               password:
+   *                 example: test@example.com
+   *               auth_key:
    *                 type: string
+   *                 example: hashed_password
+   *               profile:
+   *                 type: object
+   *                 properties:
+   *                   nickname:
+   *                     type: string
+   *                     example: 홍길동
+   *                   extra_json:
+   *                     type: object
+   *                     example: { "age": 30, "gender": "M" }
    *     responses:
    *       200:
-   *         description: 로그인 성공
-   *       401:
-   *         description: 인증 실패
-   */
-  exports.processLogin = async (req, res) => {
-    // 로그인 처리 로직
-  };
-  
-  /**
-   * @openapi
-   * /logout:
-   *   post:
-   *     summary: 로그아웃
-   *     tags:
-   *       - Auth
-   *     responses:
-   *       200:
-   *         description: 로그아웃 성공
-   */
-  exports.logout = (req, res) => {
-    res.json({ success: true });
-  };
-
-const AuthController = {
-  /**
-   * 회원가입 API
+   *         description: 회원가입 성공
+   *         content:
+   *           application/json:
+   *             schema:
+   *               type: object
+   *               properties:
+   *                 success:
+   *                   type: boolean
+   *                 account_id:
+   *                   type: integer
+   *       400:
+   *         description: 필수 입력값 누락
+   *       409:
+   *         description: 이미 가입된 계정
+   *       500:
+   *         description: 서버 오류
    */
   register: async (req, res) => {
     try {
@@ -82,7 +75,42 @@ const AuthController = {
   },
 
   /**
-   * 중복체크 API
+   * @openapi
+   * /api/check-duplicate:
+   *   post:
+   *     summary: 회원가입 중복체크
+   *     tags:
+   *       - Auth
+   *     requestBody:
+   *       required: true
+   *       content:
+   *         application/json:
+   *           schema:
+   *             type: object
+   *             properties:
+   *               project_id:
+   *                 type: integer
+   *                 example: 1
+   *               login_type:
+   *                 type: string
+   *                 example: email
+   *               login_id:
+   *                 type: string
+   *                 example: test@example.com
+   *     responses:
+   *       200:
+   *         description: 중복 여부 반환
+   *         content:
+   *           application/json:
+   *             schema:
+   *               type: object
+   *               properties:
+   *                 exists:
+   *                   type: boolean
+   *       400:
+   *         description: 필수 입력값 누락
+   *       500:
+   *         description: 서버 오류
    */
   checkDuplicate: async (req, res) => {
     try {
