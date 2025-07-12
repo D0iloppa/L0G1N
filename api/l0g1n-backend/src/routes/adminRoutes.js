@@ -10,4 +10,7 @@ router.get('/dashboard', AdminController.dashboard);
 router.get('/project/create', AdminController.showCreateProjectForm);
 router.post('/project/create', AdminController.createProject);
 
+// API 엔드포인트
+router.get('/api/projects', AdminController.getAllProjectsApi);
+
 module.exports = router;
