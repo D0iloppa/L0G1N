@@ -108,6 +108,41 @@ CREATE TABLE public.l0g1n_account_profile (
 ALTER TABLE public.l0g1n_account_profile OWNER TO l0g1n_admin;
 
 --
+-- Name: l0g1n_api_code; Type: TABLE; Schema: public; Owner: l0g1n_admin
+--
+
+CREATE TABLE public.l0g1n_api_code (
+    api_type_id integer NOT NULL,
+    api_type character varying NOT NULL,
+    api_extra jsonb
+);
+
+
+ALTER TABLE public.l0g1n_api_code OWNER TO l0g1n_admin;
+
+--
+-- Name: l0g1n_api_code_api_type_id_seq; Type: SEQUENCE; Schema: public; Owner: l0g1n_admin
+--
+
+CREATE SEQUENCE public.l0g1n_api_code_api_type_id_seq
+    AS integer
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE public.l0g1n_api_code_api_type_id_seq OWNER TO l0g1n_admin;
+
+--
+-- Name: l0g1n_api_code_api_type_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: l0g1n_admin
+--
+
+ALTER SEQUENCE public.l0g1n_api_code_api_type_id_seq OWNED BY public.l0g1n_api_code.api_type_id;
+
+
+--
 -- Name: l0g1n_project; Type: TABLE; Schema: public; Owner: l0g1n_admin
 --
 
@@ -183,6 +218,44 @@ ALTER SEQUENCE public.l0g1n_sys_admin_admin_id_seq OWNED BY public.l0g1n_sys_adm
 
 
 --
+-- Name: l0gin_project_api; Type: TABLE; Schema: public; Owner: l0g1n_admin
+--
+
+CREATE TABLE public.l0gin_project_api (
+    prj_api_id integer NOT NULL,
+    api_type_id integer NOT NULL,
+    prj_api_key character varying,
+    prj_api_extra jsonb,
+    created_at timestamp without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
+    updated_at timestamp without time zone
+);
+
+
+ALTER TABLE public.l0gin_project_api OWNER TO l0g1n_admin;
+
+--
+-- Name: l0gin_project_api_prj_api_id_seq; Type: SEQUENCE; Schema: public; Owner: l0g1n_admin
+--
+
+CREATE SEQUENCE public.l0gin_project_api_prj_api_id_seq
+    AS integer
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE public.l0gin_project_api_prj_api_id_seq OWNER TO l0g1n_admin;
+
+--
+-- Name: l0gin_project_api_prj_api_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: l0g1n_admin
+--
+
+ALTER SEQUENCE public.l0gin_project_api_prj_api_id_seq OWNED BY public.l0gin_project_api.prj_api_id;
+
+
+--
 -- Name: l0g1n_account account_id; Type: DEFAULT; Schema: public; Owner: l0g1n_admin
 --
 
@@ -197,6 +270,13 @@ ALTER TABLE ONLY public.l0g1n_account_auth ALTER COLUMN auth_id SET DEFAULT next
 
 
 --
+-- Name: l0g1n_api_code api_type_id; Type: DEFAULT; Schema: public; Owner: l0g1n_admin
+--
+
+ALTER TABLE ONLY public.l0g1n_api_code ALTER COLUMN api_type_id SET DEFAULT nextval('public.l0g1n_api_code_api_type_id_seq'::regclass);
+
+
+--
 -- Name: l0g1n_project project_id; Type: DEFAULT; Schema: public; Owner: l0g1n_admin
 --
 
@@ -208,6 +288,13 @@ ALTER TABLE ONLY public.l0g1n_project ALTER COLUMN project_id SET DEFAULT nextva
 --
 
 ALTER TABLE ONLY public.l0g1n_sys_admin ALTER COLUMN admin_id SET DEFAULT nextval('public.l0g1n_sys_admin_admin_id_seq'::regclass);
+
+
+--
+-- Name: l0gin_project_api prj_api_id; Type: DEFAULT; Schema: public; Owner: l0g1n_admin
+--
+
+ALTER TABLE ONLY public.l0gin_project_api ALTER COLUMN prj_api_id SET DEFAULT nextval('public.l0gin_project_api_prj_api_id_seq'::regclass);
 
 
 --
@@ -235,6 +322,14 @@ COPY public.l0g1n_account_profile (account_id, nickname, extra_json) FROM stdin;
 
 
 --
+-- Data for Name: l0g1n_api_code; Type: TABLE DATA; Schema: public; Owner: l0g1n_admin
+--
+
+COPY public.l0g1n_api_code (api_type_id, api_type, api_extra) FROM stdin;
+\.
+
+
+--
 -- Data for Name: l0g1n_project; Type: TABLE DATA; Schema: public; Owner: l0g1n_admin
 --
 
@@ -247,7 +342,15 @@ COPY public.l0g1n_project (project_id, project_code, project_name, status, creat
 --
 
 COPY public.l0g1n_sys_admin (admin_id, login_id, auth_key, admin_name, status, last_login_at, created_at, updated_at) FROM stdin;
-1	l0g1n	l0g1n	L0G1N	active	2025-07-12 12:11:02.015336	2025-07-12 19:48:21.26709	\N
+1	l0g1n	l0g1n	L0G1N	active	2025-07-12 12:52:53.578792	2025-07-12 19:48:21.26709	\N
+\.
+
+
+--
+-- Data for Name: l0gin_project_api; Type: TABLE DATA; Schema: public; Owner: l0g1n_admin
+--
+
+COPY public.l0gin_project_api (prj_api_id, api_type_id, prj_api_key, prj_api_extra, created_at, updated_at) FROM stdin;
 \.
 
 
@@ -266,6 +369,13 @@ SELECT pg_catalog.setval('public.l0g1n_account_auth_auth_id_seq', 1, false);
 
 
 --
+-- Name: l0g1n_api_code_api_type_id_seq; Type: SEQUENCE SET; Schema: public; Owner: l0g1n_admin
+--
+
+SELECT pg_catalog.setval('public.l0g1n_api_code_api_type_id_seq', 1, false);
+
+
+--
 -- Name: l0g1n_project_project_id_seq; Type: SEQUENCE SET; Schema: public; Owner: l0g1n_admin
 --
 
@@ -277,6 +387,13 @@ SELECT pg_catalog.setval('public.l0g1n_project_project_id_seq', 1, false);
 --
 
 SELECT pg_catalog.setval('public.l0g1n_sys_admin_admin_id_seq', 1, true);
+
+
+--
+-- Name: l0gin_project_api_prj_api_id_seq; Type: SEQUENCE SET; Schema: public; Owner: l0g1n_admin
+--
+
+SELECT pg_catalog.setval('public.l0gin_project_api_prj_api_id_seq', 1, false);
 
 
 --
@@ -301,6 +418,14 @@ ALTER TABLE ONLY public.l0g1n_account
 
 ALTER TABLE ONLY public.l0g1n_account_profile
     ADD CONSTRAINT l0g1n_account_profile_pkey PRIMARY KEY (account_id);
+
+
+--
+-- Name: l0g1n_api_code l0g1n_api_code_pk; Type: CONSTRAINT; Schema: public; Owner: l0g1n_admin
+--
+
+ALTER TABLE ONLY public.l0g1n_api_code
+    ADD CONSTRAINT l0g1n_api_code_pk PRIMARY KEY (api_type_id);
 
 
 --
@@ -399,6 +524,14 @@ ALTER TABLE ONLY public.l0g1n_account_profile
 
 ALTER TABLE ONLY public.l0g1n_account
     ADD CONSTRAINT l0g1n_account_project_id_fkey FOREIGN KEY (project_id) REFERENCES public.l0g1n_project(project_id);
+
+
+--
+-- Name: l0gin_project_api l0gin_project_api_l0g1n_api_code_fk; Type: FK CONSTRAINT; Schema: public; Owner: l0g1n_admin
+--
+
+ALTER TABLE ONLY public.l0gin_project_api
+    ADD CONSTRAINT l0gin_project_api_l0g1n_api_code_fk FOREIGN KEY (api_type_id) REFERENCES public.l0g1n_api_code(api_type_id);
 
 
 --
