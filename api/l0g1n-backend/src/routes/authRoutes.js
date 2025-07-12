@@ -3,13 +3,8 @@ const AuthController = require('../controllers/AuthController');
 
 const router = express.Router();
 
-
-
-// 시스템 관리자 로그인
-
-// 
-
-
+router.post('/check-duplicate', AuthController.checkDuplicate);
+router.post('/register', AuthController.register);
 
 router.get('/login', AuthController.showLoginForm);       // 로그인 폼
 router.post('/login', AuthController.processLogin);       // 로그인 처리
