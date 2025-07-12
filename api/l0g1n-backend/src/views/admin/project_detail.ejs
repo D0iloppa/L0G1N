@@ -308,15 +308,10 @@ body:not(.light-mode) .empty-apis {
       <div class="api-grid">
         <% projectApis.forEach(api => { %>
           <div class="api-card">
-            <div class="api-name"><%= api.api_name || api.api_code %></div>
-            <div class="api-code"><%= api.api_code %></div>
-            <% if (api.api_description) { %>
-              <div class="api-description"><%= api.api_description %></div>
-            <% } %>
+            <div class="api-name"><%= api.api_type %></div>
+            <div class="api-code"><%= api.prj_api_key %></div>
             <div class="api-actions">
-              <button class="remove-api-btn" onclick="removeApi('<%= api.api_id %>')">
-                제거
-              </button>
+              <button class="remove-api-btn" onclick="removeApi('<%= api.prj_api_id %>')">제거</button>
             </div>
           </div>
         <% }) %>
@@ -332,15 +327,14 @@ body:not(.light-mode) .empty-apis {
     <div class="add-api-section">
       <h4 style="margin: 0 0 15px 0;">➕ 추가 인증 방식</h4>
       <div class="add-api-form">
-        <select id="apiSelect" class="api-select">
+        <select id="apiTypeSelect" class="api-select">
           <option value="">인증 방식을 선택하세요</option>
-          <% authCodes.forEach(code => { %>
-            <option value="<%= code.api_code %>"><%= code.api_name %> - <%= code.api_description %></option>
+          <% unlinkedAuthTypes.forEach(type => { %>
+            <option value="<%= type.api_type_id %>"><%= type.api_type %></option>
           <% }) %>
         </select>
-        <button class="add-api-btn" onclick="addApi()">
-          추가하기
-        </button>
+        <input id="prjApiKey" class="api-select" type="text" placeholder="API 키 (예: client_id)" />
+        <button class="add-api-btn" onclick="addApi()">추가하기</button>
       </div>
     </div>
   </div>
@@ -357,29 +351,26 @@ body:not(.light-mode) .empty-apis {
 <script>
 // API 추가 함수
 async function addApi() {
-  const apiCode = document.getElementById('apiSelect').value;
-  
-  if (!apiCode) {
+  const apiTypeId = document.getElementById('apiTypeSelect').value;
+  const prjApiKey = document.getElementById('prjApiKey').value.trim();
+  if (!apiTypeId) {
     showToast('인증 방식을 선택해주세요.', 'warning');
     return;
   }
-  
+  if (!prjApiKey) {
+    showToast('API 키를 입력해주세요.', 'warning');
+    return;
+  }
   try {
     const response = await fetch(`/admin/project/<%= project.project_code %>/api/add`, {
       method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({ apiCode })
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ apiTypeId, prjApiKey })
     });
-    
     const result = await response.json();
-    
     if (result.success) {
       showToast(result.message, 'success');
-      setTimeout(() => {
-        window.location.reload();
-      }, 1500);
+      setTimeout(() => { window.location.reload(); }, 1500);
     } else {
       showToast(result.error, 'error');
     }

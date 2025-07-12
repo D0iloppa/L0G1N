@@ -277,24 +277,16 @@ const AdminService = {
   },
 
   /**
-   * 프로젝트 API 목록 조회
-   * @param {number} projectId - 프로젝트 ID
-   * @returns {Promise<Array>} - API 목록
+   * 프로젝트별 연동 인증 목록 조회
    */
   getProjectApis: async (projectId) => {
     try {
       const query = `
-        SELECT 
-          lpa.api_id,
-          lpa.project_id,
-          lpa.api_code,
-          lpa.created_at,
-          lac.api_name,
-          lac.api_description
-        FROM l0g1n_project_api lpa
-        LEFT JOIN l0g1n_api_code lac ON lpa.api_code = lac.api_code
-        WHERE lpa.project_id = $1
-        ORDER BY lpa.created_at DESC
+        SELECT p.prj_api_id, p.api_type_id, c.api_type, p.prj_api_key, p.prj_api_extra, p.created_at
+          FROM l0gin_project_api p
+          JOIN l0g1n_api_code c ON p.api_type_id = c.api_type_id
+         WHERE p.project_id = $1
+         ORDER BY p.created_at DESC
       `;
       const result = await db.query(query, [projectId]);
       return result.rows;
@@ -305,54 +297,37 @@ const AdminService = {
   },
 
   /**
-   * 인증 코드 목록 조회
-   * @returns {Promise<Array>} - 인증 코드 목록
+   * 프로젝트에 아직 연동되지 않은 인증 타입 목록 조회
    */
-  getAuthCodes: async () => {
+  getUnlinkedAuthTypes: async (projectId) => {
     try {
-      const query = 'SELECT * FROM l0g1n_api_code ORDER BY api_name';
-      const result = await db.query(query);
+      const query = `
+        SELECT api_type_id, api_type
+          FROM l0g1n_api_code
+         WHERE api_type_id NOT IN (
+           SELECT api_type_id FROM l0gin_project_api WHERE project_id = $1
+         )
+         ORDER BY api_type
+      `;
+      const result = await db.query(query, [projectId]);
       return result.rows;
     } catch (error) {
-      console.error('AdminService.getAuthCodes error:', error);
+      console.error('AdminService.getUnlinkedAuthTypes error:', error);
       throw error;
     }
   },
 
   /**
-   * 프로젝트에 API 추가
-   * @param {string} projectCode - 프로젝트 코드
-   * @param {string} apiCode - API 코드
-   * @returns {Promise<Object>} - 추가된 API 정보
+   * 프로젝트에 인증 방식 추가
    */
-  addProjectApi: async (projectCode, apiCode) => {
+  addProjectApi: async (projectId, apiTypeId, prjApiKey) => {
     try {
-      // 프로젝트 ID 조회
-      const projectQuery = 'SELECT project_id FROM l0g1n_project WHERE project_code = $1';
-      const projectResult = await db.query(projectQuery, [projectCode]);
-      
-      if (projectResult.rows.length === 0) {
-        throw new Error('프로젝트를 찾을 수 없습니다.');
-      }
-      
-      const projectId = projectResult.rows[0].project_id;
-      
-      // 이미 추가된 API인지 확인
-      const existsQuery = 'SELECT COUNT(*) as count FROM l0g1n_project_api WHERE project_id = $1 AND api_code = $2';
-      const existsResult = await db.query(existsQuery, [projectId, apiCode]);
-      
-      if (parseInt(existsResult.rows[0].count) > 0) {
-        throw new Error('이미 추가된 API입니다.');
-      }
-      
-      // API 추가
-      const insertQuery = `
-        INSERT INTO l0g1n_project_api (project_id, api_code) 
-        VALUES ($1, $2) 
+      const query = `
+        INSERT INTO l0gin_project_api (project_id, api_type_id, prj_api_key)
+        VALUES ($1, $2, $3)
         RETURNING *
       `;
-      
-      const result = await db.query(insertQuery, [projectId, apiCode]);
+      const result = await db.query(query, [projectId, apiTypeId, prjApiKey]);
       return result.rows[0];
     } catch (error) {
       console.error('AdminService.addProjectApi error:', error);
@@ -361,27 +336,12 @@ const AdminService = {
   },
 
   /**
-   * 프로젝트에서 API 제거
-   * @param {string} projectCode - 프로젝트 코드
-   * @param {number} apiId - API ID
-   * @returns {Promise<void>}
+   * 프로젝트에서 인증 방식 제거
    */
-  removeProjectApi: async (projectCode, apiId) => {
+  removeProjectApi: async (prjApiId) => {
     try {
-      // 프로젝트 ID 조회
-      const projectQuery = 'SELECT project_id FROM l0g1n_project WHERE project_code = $1';
-      const projectResult = await db.query(projectQuery, [projectCode]);
-      
-      if (projectResult.rows.length === 0) {
-        throw new Error('프로젝트를 찾을 수 없습니다.');
-      }
-      
-      const projectId = projectResult.rows[0].project_id;
-      
-      // API 제거
-      const deleteQuery = 'DELETE FROM l0g1n_project_api WHERE project_id = $1 AND api_id = $2';
-      const result = await db.query(deleteQuery, [projectId, apiId]);
-      
+      const query = 'DELETE FROM l0gin_project_api WHERE prj_api_id = $1';
+      const result = await db.query(query, [prjApiId]);
       if (result.rowCount === 0) {
         throw new Error('제거할 API를 찾을 수 없습니다.');
       }

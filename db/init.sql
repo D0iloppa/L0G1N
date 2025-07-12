@@ -227,7 +227,8 @@ CREATE TABLE public.l0gin_project_api (
     prj_api_key character varying,
     prj_api_extra jsonb,
     created_at timestamp without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
-    updated_at timestamp without time zone
+    updated_at timestamp without time zone,
+    project_id bigint
 );
 
 
@@ -347,7 +348,7 @@ COPY public.l0g1n_project (project_id, project_code, project_name, status, creat
 --
 
 COPY public.l0g1n_sys_admin (admin_id, login_id, auth_key, admin_name, status, last_login_at, created_at, updated_at) FROM stdin;
-1	l0g1n	l0g1n	L0G1N	active	2025-07-12 12:52:53.578792	2025-07-12 19:48:21.26709	\N
+1	l0g1n	l0g1n	L0G1N	active	2025-07-12 13:44:57.809764	2025-07-12 19:48:21.26709	\N
 \.
 
 
@@ -355,7 +356,7 @@ COPY public.l0g1n_sys_admin (admin_id, login_id, auth_key, admin_name, status, l
 -- Data for Name: l0gin_project_api; Type: TABLE DATA; Schema: public; Owner: l0g1n_admin
 --
 
-COPY public.l0gin_project_api (prj_api_id, api_type_id, prj_api_key, prj_api_extra, created_at, updated_at) FROM stdin;
+COPY public.l0gin_project_api (prj_api_id, api_type_id, prj_api_key, prj_api_extra, created_at, updated_at, project_id) FROM stdin;
 \.
 
 
@@ -537,6 +538,14 @@ ALTER TABLE ONLY public.l0g1n_account
 
 ALTER TABLE ONLY public.l0gin_project_api
     ADD CONSTRAINT l0gin_project_api_l0g1n_api_code_fk FOREIGN KEY (api_type_id) REFERENCES public.l0g1n_api_code(api_type_id);
+
+
+--
+-- Name: l0gin_project_api l0gin_project_api_l0g1n_project_fk; Type: FK CONSTRAINT; Schema: public; Owner: l0g1n_admin
+--
+
+ALTER TABLE ONLY public.l0gin_project_api
+    ADD CONSTRAINT l0gin_project_api_l0g1n_project_fk FOREIGN KEY (project_id) REFERENCES public.l0g1n_project(project_id);
 
 
 --

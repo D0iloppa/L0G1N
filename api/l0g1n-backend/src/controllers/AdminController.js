@@ -107,12 +107,12 @@ const AdminController = {
       }
       
       const projectApis = await AdminService.getProjectApis(project.project_id);
-      const authCodes = await AdminService.getAuthCodes();
+      const unlinkedAuthTypes = await AdminService.getUnlinkedAuthTypes(project.project_id);
       
       res.render('admin/project_detail', { 
         project, 
         projectApis, 
-        authCodes,
+        unlinkedAuthTypes,
         layout: 'layout' 
       });
     } catch (error) {
@@ -132,10 +132,12 @@ const AdminController = {
     }
     
     const { projectCode } = req.params;
-    const { apiCode } = req.body;
+    const { apiTypeId, prjApiKey } = req.body;
     
     try {
-      await AdminService.addProjectApi(projectCode, apiCode);
+      const project = await AdminService.getProjectByCode(projectCode);
+      if (!project) return res.status(404).json({ error: '프로젝트를 찾을 수 없습니다.' });
+      await AdminService.addProjectApi(project.project_id, apiTypeId, prjApiKey);
       res.json({ success: true, message: 'API가 성공적으로 추가되었습니다.' });
     } catch (error) {
       console.error('Add project API error:', error);
@@ -149,10 +151,10 @@ const AdminController = {
       return res.status(401).json({ error: 'Unauthorized' });
     }
     
-    const { projectCode, apiId } = req.params;
+    const { apiId } = req.params;
     
     try {
-      await AdminService.removeProjectApi(projectCode, apiId);
+      await AdminService.removeProjectApi(apiId);
       res.json({ success: true, message: 'API가 성공적으로 제거되었습니다.' });
     } catch (error) {
       console.error('Remove project API error:', error);
