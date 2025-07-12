@@ -73,5 +73,5 @@ docker-compose -f docker-compose-dev.yml down --rmi all
 
 ### note
 ```bash
-docker exec -t l0g1n-db \\n  pg_dump -U l0g1n_admin -d l0g1n_db --schema-only --no-owner --no-privileges \\n  > ./db/init.sql
+ocker exec -t l0g1n-db pg_dump -U l0g1n_admin -d l0g1n_db > backup_$(date +%Y%m%d_%H%M%S).sql
 ```
