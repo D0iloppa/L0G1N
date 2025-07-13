@@ -13,6 +13,20 @@ A fast, powerful, and simple authentication component for modern web application
 
 ---
 
+# TODO
+
+## Core Features
+- [x] Engine
+- [ ] Redis token management
+- [ ] SDK components
+
+## Advanced Features
+- [ ] 고도화 (Advanced Features)
+  - [ ] 로그 시스템 구현 (Logging System)
+  - [ ] 메트릭 수집 (Metrics Collection)
+  - [ ] 헬스체크 엔드포인트 (Health Check Endpoints)
+
+
 ## 아키텍처
 
 L0G1N은 확장성과 보안성을 고려하여 설계된 로그인 인증 통합 BaaS(Backend as a Service)입니다.
