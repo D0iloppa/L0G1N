@@ -1,6 +1,7 @@
 const db = require('../db/dbClient');
 
 const AuthService = {
+
   /**
    * 회원가입
    * @param {Object} params - 회원가입 정보
@@ -14,6 +15,7 @@ const AuthService = {
    */
   register: async ({ project_id, login_type, login_id, auth_key, client_encrypt = false, profile }) => {
     const client = await db.getClient();
+    
     try {
       await client.query('BEGIN');
       // 1. l0g1n_account 생성
@@ -75,11 +77,12 @@ const AuthService = {
    */
   getAuthKey: async (login_type, login_id, input_val, options = {}) => {
     const { client_encrypt = false } = options;
+
+    const crypto = require('crypto');
     
     let tmpInputVal = input_val;
     // 서버사이드 암호화
     if (!client_encrypt) {
-        const crypto = require('crypto');
         tmpInputVal = crypto.createHash('sha256').update(login_id + input_val).digest('hex');
     }
     
@@ -87,15 +90,14 @@ const AuthService = {
     switch (login_type) {
       case 'id-pw':
       case 'email-pw':
-        return input_val;
+        return tmpInputVal;
       case 'id-hashpw':
       case 'email-hashpw': {
         // hash + salt (salt는 updated_at)
         const salt = options.salt;
         if (!salt) throw new Error('Salt 값이 필요합니다.');
-        // 예시: sha256(login_id + input_val + salt)
-        const crypto = require('crypto');
-        return crypto.createHash('sha256').update(login_id + input_val + salt).digest('hex');
+        // 예시: sha256(login_id + input_val + salt
+        return crypto.createHash('sha256').update(login_id + tmpInputVal + salt).digest('hex');
       }
       // 기타 인증 방식 확장 가능
       default:

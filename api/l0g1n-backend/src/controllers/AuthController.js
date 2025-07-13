@@ -1,4 +1,5 @@
 const AuthService = require('../services/AuthService');
+const jwt = require('jsonwebtoken');
 
 const AuthController = {
   /**
@@ -61,6 +62,36 @@ const AuthController = {
       }
       const result = await AuthService.login(project_id, login_type, login_id, input_val, client_encrypt);
       if (result.success) {
+        // JWT 토큰 생성
+        const token = jwt.sign(
+          { 
+            account_id: result.account.account_id,
+            project_id: project_id,
+            login_id: login_id,
+            login_type: login_type
+          },
+          process.env.JWT_SECRET || 'your-secret-key',
+          { expiresIn: '1h' }
+        );
+
+        // HTTP-only 쿠키 설정
+        res.cookie('jwt_token', token, {
+          httpOnly: true,
+          secure: process.env.NODE_ENV === 'production', // HTTPS에서만 전송
+          sameSite: 'strict',
+          maxAge: 60 * 60 * 1000, // 1시간
+          path: '/'
+        });
+
+        // Redis에 토큰 저장 (SRP 원칙에 따라 별도 함수로 분리)
+        try {
+          // RedisController.storeToken(token, result.account.account_id);
+          // RedisController는 별도로 구현 예정
+        } catch (redisError) {
+          console.error('Redis 저장 오류:', redisError);
+          // Redis 오류는 로그인을 막지 않음
+        }
+
         res.json({ success: true, account: result.account });
       } else if (result.error === '프로젝트가 존재하지 않습니다.') {
         res.status(404).json({ error: result.error });
@@ -76,6 +107,53 @@ const AuthController = {
       res.status(500).json({ error: '로그인 처리 중 오류가 발생했습니다.' });
     }
   },
+
+  /**
+   * @openapi
+   * /api/logout:
+   *   post:
+   *     summary: 로그아웃
+   *     tags:
+   *       - Auth
+   *     responses:
+   *       200:
+   *         description: 로그아웃 성공
+   *         content:
+   *           application/json:
+   *             schema:
+   *               type: object
+   *               properties:
+   *                 success:
+   *                   type: boolean
+   *       500:
+   *         description: 서버 오류
+   */
+  logout: async (req, res) => {
+    try {
+      // JWT 쿠키 제거
+      res.clearCookie('jwt_token', {
+        httpOnly: true,
+        secure: process.env.NODE_ENV === 'production',
+        sameSite: 'strict',
+        path: '/'
+      });
+
+      // Redis에서 토큰 제거 (SRP 원칙에 따라 별도 함수로 분리)
+      try {
+        // RedisController.removeToken(req.cookies.jwt_token);
+        // RedisController는 별도로 구현 예정
+      } catch (redisError) {
+        console.error('Redis 제거 오류:', redisError);
+        // Redis 오류는 로그아웃을 막지 않음
+      }
+
+      res.json({ success: true, message: '로그아웃되었습니다.' });
+    } catch (err) {
+      console.error('로그아웃 오류:', err);
+      res.status(500).json({ error: '로그아웃 처리 중 오류가 발생했습니다.' });
+    }
+  },
+
   /**
    * @openapi
    * /api/register:
