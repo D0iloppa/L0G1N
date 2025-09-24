@@ -87,5 +87,5 @@ docker-compose -f docker-compose-dev.yml down --rmi all
 
 ### note
 ```bash
-ocker exec -t l0g1n-db pg_dump -U l0g1n_admin -d l0g1n_db > backup_$(date +%Y%m%d_%H%M%S).sql
+docker exec -t l0g1n-db pg_dump -U l0g1n_admin -d l0g1n_db > backup_$(date +%Y%m%d_%H%M%S).sql
 ```
